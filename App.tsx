@@ -341,7 +341,20 @@ export default function App() {
     if (!isHomeUpdate) setIsLoading(true);
     
     try {
-      const res = await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(query)}&media=music&entity=song&limit=40`);
+      // 1. Build the API URL
+      const api = `https://itunes.apple.com/search?term=${encodeURIComponent(query)}&media=music&entity=song&limit=40`;
+      
+      // 2. Wrap the API URL with a CORS proxy to support mobile/web browsers
+      // Encoding the target API URL ensures query parameters are passed correctly to the proxy
+      const proxy = `https://corsproxy.io/?${encodeURIComponent(api)}`;
+
+      // 3. Fetch the data
+      const res = await fetch(proxy, { mode: "cors" });
+      
+      if (!res.ok) {
+        throw new Error(`Search failed with status ${res.status}`);
+      }
+
       const data = await res.json();
       
       const songs: Song[] = data.results.map((item: any) => ({
@@ -360,7 +373,11 @@ export default function App() {
         setSearchResults(songs);
       }
     } catch (e) {
-      console.error("Search failed", e);
+      console.error("Mobile CORS error:", e);
+      // Fallback to direct call if proxy fails (though unlikely)
+      if (e instanceof Error && !isHomeUpdate) {
+         // Optional: Provide user feedback here
+      }
     } finally {
       setIsLoading(false);
     }
@@ -678,8 +695,8 @@ export default function App() {
            {/* VIEW: PLAYLIST DETAILS */}
            {view === 'playlist-details' && activePlaylist && (
              <div className="view-container">
-                <div className="flex flex-col md:flex-row gap-6" style={{ marginBottom: '2rem', alignItems: 'flex-end' }}>
-                   <div style={{ width: '200px', height: '200px', backgroundColor: '#1f2937', borderRadius: '0.75rem', overflow: 'hidden', display: 'grid', gridTemplateColumns: '1fr 1fr', flexShrink: 0, boxShadow: '0 10px 25px rgba(0,0,0,0.5)' }}>
+                <div className="playlist-header">
+                   <div className="playlist-cover">
                       {activePlaylist.songs.slice(0,4).map(s => <img key={s.id} src={s.coverUrl} style={{ width: '100%', height: '100%', objectFit: 'cover' }}/>)}
                    </div>
                    <div style={{ flex: 1 }}>
@@ -871,7 +888,7 @@ export default function App() {
 
            <div className="player-controls-row">
               {/* Song Info */}
-              <div className="flex items-center gap-3" style={{ width: '30%', overflow: 'hidden' }}>
+              <div className="player-track-info">
                  {currentSong ? (
                    <>
                      <img src={currentSong.coverUrl} style={{ width: '48px', height: '48px', borderRadius: '4px', border: '1px solid #333' }} className={player.isPlaying ? 'animate-spin-slow' : ''} alt="Art" />
@@ -892,16 +909,16 @@ export default function App() {
               </div>
 
               {/* Controls */}
-              <div className="flex items-center justify-center gap-6" style={{ flex: 1 }}>
-                 <button onClick={() => player.skip(-10)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }} className="hover:text-primary"><RotateCcw size={20} /></button>
+              <div className="player-actions">
+                 <button onClick={() => player.skip(-10)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }} className="hover:text-primary skip-btn"><RotateCcw size={20} /></button>
                  <button onClick={player.togglePlay} className="play-fab">
                    {player.isPlaying ? <Pause size={24} fill="black" /> : <Play size={24} fill="black" style={{ marginLeft: '2px' }} />}
                  </button>
-                 <button onClick={() => player.skip(10)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }} className="hover:text-primary"><RotateCw size={20} /></button>
+                 <button onClick={() => player.skip(10)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }} className="hover:text-primary skip-btn"><RotateCw size={20} /></button>
               </div>
 
               {/* Volume */}
-              <div className="vol-control flex justify-end items-center gap-3" style={{ width: '30%' }}>
+              <div className="player-volume">
                  <Volume2 size={18} className="text-muted" />
                  <input 
                    type="range" min="0" max="1" step="0.01" 
