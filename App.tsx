@@ -143,92 +143,85 @@ const AuthScreen = ({ onLogin, onGuest }: { onLogin: (u: User) => void, onGuest:
   };
 
   return (
-    <div className="min-h-screen bg-[#050505] flex items-center justify-center p-4 relative overflow-hidden font-sans">
-      {/* Background Effects */}
-      <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-[#1a1a1a] to-[#000000] z-0"></div>
-      <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-neon-green/10 rounded-full blur-[120px] animate-pulse-slow"></div>
-      <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-neon-green/5 rounded-full blur-[120px] animate-pulse-slow animation-delay-2000"></div>
+    <div className="auth-container">
+      <div className="auth-bg-gradient"></div>
+      <div className="auth-orb" style={{ top: '-20%', left: '-10%', width: '50%', height: '50%', background: 'rgba(57,255,20,0.1)' }}></div>
+      <div className="auth-orb" style={{ bottom: '-20%', right: '-10%', width: '50%', height: '50%', background: 'rgba(57,255,20,0.05)' }}></div>
 
-      <div className="bg-[#121212]/80 backdrop-blur-xl border border-white/10 w-full max-w-md p-8 rounded-2xl shadow-2xl z-10 relative">
-        <div className="text-center mb-8">
-          <div className="flex items-center justify-center gap-3 mb-2 text-neon-green animate-glow">
+      <div className="auth-card">
+        <div className="text-center" style={{ marginBottom: '2rem' }}>
+          <div className="flex justify-center items-center gap-2 text-primary animate-glow" style={{ marginBottom: '0.5rem' }}>
             <Music2 size={48} />
-            <span className="text-4xl font-mono font-black tracking-tighter">616</span>
+            <span className="font-mono" style={{ fontSize: '2.5rem', fontWeight: 900 }}>616</span>
           </div>
-          <p className="text-gray-400 text-sm uppercase tracking-widest">{t.auth.subtitle}</p>
+          <p className="text-muted" style={{ fontSize: '0.875rem', letterSpacing: '0.1em', textTransform: 'uppercase' }}>{t.auth.subtitle}</p>
         </div>
 
         {/* Language Switcher Mini */}
-        <div className="absolute top-4 right-4 flex gap-2">
+        <div className="absolute" style={{ top: '1rem', right: '1rem', display: 'flex', gap: '0.5rem' }}>
           {['az', 'en', 'tr', 'ru'].map((l) => (
             <button 
               key={l} 
               onClick={() => setLang(l as Language)} 
-              className={`text-xs font-bold uppercase px-2 py-1 rounded ${lang === l ? 'text-neon-green bg-white/10' : 'text-gray-600 hover:text-gray-400'}`}
+              className="font-bold"
+              style={{ 
+                background: 'none', border: 'none', textTransform: 'uppercase', fontSize: '0.75rem', cursor: 'pointer',
+                color: lang === l ? 'var(--primary)' : '#666' 
+              }}
             >
               {l}
             </button>
           ))}
         </div>
 
-        <h2 className="text-2xl font-bold text-white mb-6 text-center">
+        <h2 className="font-bold text-center" style={{ fontSize: '1.5rem', marginBottom: '1.5rem', color: 'white' }}>
           {mode === 'register' ? t.auth.register_title : t.auth.login_title}
         </h2>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <div className="relative">
-              <UserIcon className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" size={20} />
-              <input 
-                type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                placeholder={t.auth.username}
-                className="w-full bg-black/50 border border-gray-800 rounded-xl py-3 pl-10 pr-4 text-white focus:border-neon-green focus:outline-none transition-colors"
-              />
-            </div>
+        <form onSubmit={handleSubmit}>
+          <div className="auth-input-group">
+            <UserIcon className="absolute" style={{ left: '0.75rem', top: '50%', transform: 'translateY(-50%)', color: '#666' }} size={20} />
+            <input 
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              placeholder={t.auth.username}
+              className="auth-input"
+            />
           </div>
-          <div>
-            <div className="relative">
-              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" size={20} />
-              <input 
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder={t.auth.password}
-                className="w-full bg-black/50 border border-gray-800 rounded-xl py-3 pl-10 pr-4 text-white focus:border-neon-green focus:outline-none transition-colors"
-              />
-            </div>
+          <div className="auth-input-group">
+            <Lock className="absolute" style={{ left: '0.75rem', top: '50%', transform: 'translateY(-50%)', color: '#666' }} size={20} />
+            <input 
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder={t.auth.password}
+              className="auth-input"
+            />
           </div>
 
-          {error && <div className="text-red-500 text-sm text-center bg-red-500/10 py-2 rounded-lg">{error}</div>}
+          {error && <div style={{ color: '#ef4444', background: 'rgba(239,68,68,0.1)', padding: '0.5rem', borderRadius: '0.5rem', textAlign: 'center', marginBottom: '1rem', fontSize: '0.875rem' }}>{error}</div>}
 
-          <button 
-            type="submit"
-            className="w-full bg-neon-green text-black font-bold py-3 rounded-xl hover:shadow-[0_0_20px_rgba(57,255,20,0.4)] transition-all transform hover:scale-[1.02] flex items-center justify-center gap-2"
-          >
+          <button type="submit" className="btn-primary" style={{ marginBottom: '1.5rem' }}>
             {mode === 'register' ? t.auth.register : t.auth.login} <ArrowRight size={18}/>
           </button>
         </form>
 
-        <div className="mt-6 text-center space-y-4">
+        <div className="text-center">
           <button 
             onClick={() => { setMode(mode === 'register' ? 'login' : 'register'); setError(''); }}
-            className="text-gray-400 hover:text-white text-sm transition-colors"
+            style={{ background: 'none', border: 'none', color: '#999', fontSize: '0.875rem', cursor: 'pointer', marginBottom: '1rem' }}
           >
             {mode === 'register' ? t.auth.have_account : t.auth.no_account}
           </button>
 
-          <div className="flex items-center gap-4">
-            <div className="h-[1px] flex-1 bg-gray-800"></div>
-            <span className="text-gray-600 text-xs uppercase">Or</span>
-            <div className="h-[1px] flex-1 bg-gray-800"></div>
+          <div className="flex items-center gap-4" style={{ marginBottom: '1rem' }}>
+            <div style={{ height: '1px', flex: 1, background: '#333' }}></div>
+            <span style={{ color: '#666', fontSize: '0.75rem', textTransform: 'uppercase' }}>Or</span>
+            <div style={{ height: '1px', flex: 1, background: '#333' }}></div>
           </div>
 
-          <button 
-            onClick={onGuest}
-            className="w-full border border-gray-700 text-gray-300 font-bold py-3 rounded-xl hover:bg-white/5 transition-all"
-          >
+          <button onClick={onGuest} className="btn-outline">
             {t.auth.guest_continue}
           </button>
         </div>
@@ -295,14 +288,10 @@ export default function App() {
       setPlaylists(data.playlists || []);
       if (data.settings) setSettings(data.settings);
     } else {
-      // Reset for new/guest user if no data exists
       setLibrary([]);
       setPlaylists([]);
-      // Keep default settings or partial settings
       setSettings(prev => ({...prev, volume: 0.5})); 
     }
-
-    // Load home content every time we enter app
     fetchInitialContent();
   }, [user]);
 
@@ -382,7 +371,6 @@ export default function App() {
     player.playTrack(song.audioUrl);
   };
 
-  // Playlist Management
   const createPlaylist = () => {
     if (!newPlaylistName.trim()) return;
     const newPl: Playlist = {
@@ -461,9 +449,7 @@ export default function App() {
   }, [player.isPlaying, player.progress, currentSong, view, activePlaylist, library, searchResults, homeSongs]);
 
 
-  // -- RENDER AUTH IF NO USER --
-
-  if (isAuthChecking) return <div className="h-screen w-full bg-[#050505] flex items-center justify-center"><Loader2 className="animate-spin text-neon-green" size={48}/></div>;
+  if (isAuthChecking) return <div className="app-container justify-center items-center" style={{background: '#050505'}}><Loader2 className="animate-spin text-primary" size={48}/></div>;
 
   if (!user) {
     return <AuthScreen onLogin={handleLogin} onGuest={() => handleLogin({ id: 'guest', username: 'Guest', avatarUrl: 'https://api.dicebear.com/7.x/avataaars/svg?seed=guest' })} />;
@@ -471,8 +457,9 @@ export default function App() {
 
   // -- RENDER APP --
 
-  const bgStyle = settings.background.startsWith('#') ? { backgroundColor: settings.background } : { backgroundImage: settings.background, backgroundSize: 'cover' };
-  const isLight = settings.theme === 'light-neon';
+  // Theme class handling
+  const themeClass = settings.theme === 'light-neon' ? 'light-theme' : 'dark-theme';
+  const bgStyle = settings.background.startsWith('#') ? { backgroundColor: settings.background } : { backgroundImage: settings.background };
 
   const SongItem = ({ song, displayMode = 'card' }: { song: Song, displayMode?: 'card' | 'row' }) => {
     const isPlayingThis = currentSong?.id === song.id;
@@ -480,27 +467,24 @@ export default function App() {
 
     if (displayMode === 'row') {
       return (
-        <div className={`group flex items-center p-2 rounded-lg hover:bg-white/10 transition-colors ${isPlayingThis ? 'bg-white/10' : ''} ${isLight ? 'hover:bg-black/10 text-black' : 'text-white'}`}>
-          <div onClick={() => playSong(song)} className="relative w-12 h-12 rounded overflow-hidden mr-4 cursor-pointer shrink-0">
-            <img src={song.coverUrl} alt="art" className={`w-full h-full object-cover ${isPlayingThis ? 'opacity-50' : ''}`} />
-            {isPlayingThis && <div className="absolute inset-0 flex items-center justify-center"><div className="w-2 h-2 bg-neon-green rounded-full animate-ping"/></div>}
-            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
-              <Play size={20} className="text-white fill-white" />
-            </div>
+        <div className={`list-row ${isPlayingThis ? 'active' : ''}`}>
+          <div onClick={() => playSong(song)} className="relative cursor-pointer" style={{ width: '48px', height: '48px', marginRight: '1rem', borderRadius: '4px', overflow: 'hidden', flexShrink: 0 }}>
+            <img src={song.coverUrl} alt="art" style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: isPlayingThis ? 0.5 : 1 }} />
+            {isPlayingThis && <div className="absolute" style={{ inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><div style={{width: '8px', height: '8px', background: 'var(--primary)', borderRadius: '50%' }} className="animate-glow"/></div>}
           </div>
-          <div className="flex-1 min-w-0 mr-4 cursor-pointer" onClick={() => playSong(song)}>
-             <h4 className={`font-bold truncate ${isPlayingThis ? 'text-neon-green' : ''}`}>{song.title}</h4>
-             <p className={`text-xs truncate ${isLight ? 'text-gray-600' : 'text-gray-400'}`}>{song.artist}</p>
+          <div className="flex-col" style={{ flex: 1, overflow: 'hidden', marginRight: '1rem', cursor: 'pointer' }} onClick={() => playSong(song)}>
+             <h4 className="truncate font-bold" style={{ color: isPlayingThis ? 'var(--primary)' : 'var(--text-main)', fontSize: '0.9rem' }}>{song.title}</h4>
+             <p className="truncate text-muted" style={{ fontSize: '0.75rem' }}>{song.artist}</p>
           </div>
-          <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-             <button onClick={() => toggleLibrary(song)} className={`p-2 rounded-full hover:bg-white/10 ${inLib ? 'text-neon-green' : (isLight ? 'text-gray-500' : 'text-gray-400')}`}>
+          <div className="row-actions">
+             <button onClick={() => toggleLibrary(song)} className="icon-btn" style={{ color: inLib ? 'var(--primary)' : 'inherit' }}>
                 <Heart size={18} fill={inLib ? "currentColor" : "none"} />
              </button>
-             <button onClick={() => setShowAddToPlaylistModal(song)} className={`p-2 rounded-full hover:bg-white/10 ${isLight ? 'text-gray-500 hover:text-black' : 'text-gray-400 hover:text-white'}`}>
+             <button onClick={() => setShowAddToPlaylistModal(song)} className="icon-btn">
                 <ListMusic size={18} />
              </button>
              {view === 'playlist-details' && activePlaylist && (
-               <button onClick={() => removeSongFromPlaylist(activePlaylist.id, song.id)} className="p-2 rounded-full hover:bg-red-500/20 text-gray-400 hover:text-red-500">
+               <button onClick={() => removeSongFromPlaylist(activePlaylist.id, song.id)} className="icon-btn" style={{ color: '#ef4444' }}>
                   <Trash2 size={18} />
                </button>
              )}
@@ -510,20 +494,20 @@ export default function App() {
     }
 
     return (
-      <div className={`group relative p-4 rounded-xl transition-colors ${isLight ? 'bg-white/60 hover:bg-white/80 text-black shadow-lg' : 'bg-[#121212] hover:bg-[#1a1a1a] text-white'}`}>
-        <div onClick={() => playSong(song)} className="relative w-full aspect-square rounded-lg overflow-hidden mb-4 shadow-lg cursor-pointer">
-          <img src={song.coverUrl} alt={song.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-          <button className="absolute bottom-3 right-3 w-10 h-10 bg-neon-green rounded-full flex items-center justify-center shadow-lg opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
-             <Play size={20} fill="black" className="text-black ml-1" />
+      <div className="card group">
+        <div onClick={() => playSong(song)} className="card-image-container cursor-pointer">
+          <img src={song.coverUrl} alt={song.title} className="card-image" />
+          <button className="play-overlay-btn">
+             <Play size={20} fill="black" style={{marginLeft: '2px'}} />
           </button>
         </div>
-        <h3 className="font-bold truncate mb-1">{song.title}</h3>
-        <p className={`text-sm truncate mb-3 ${isLight ? 'text-gray-600' : 'text-gray-400'}`}>{song.artist}</p>
-        <div className="flex items-center justify-between">
-           <button onClick={() => toggleLibrary(song)} className={`${inLib ? 'text-neon-green' : (isLight ? 'text-gray-400 hover:text-black' : 'text-gray-500 hover:text-white')}`}>
+        <h3 className="font-bold truncate" style={{ marginBottom: '0.25rem' }}>{song.title}</h3>
+        <p className="text-muted truncate" style={{ fontSize: '0.875rem', marginBottom: '0.75rem' }}>{song.artist}</p>
+        <div className="flex justify-between items-center">
+           <button onClick={() => toggleLibrary(song)} className="icon-btn" style={{ padding: 0, color: inLib ? 'var(--primary)' : 'inherit' }}>
               <Heart size={20} fill={inLib ? "currentColor" : "none"} />
            </button>
-           <button onClick={() => setShowAddToPlaylistModal(song)} className={isLight ? 'text-gray-400 hover:text-black' : 'text-gray-500 hover:text-white'}>
+           <button onClick={() => setShowAddToPlaylistModal(song)} className="icon-btn" style={{ padding: 0 }}>
               <Plus size={20} />
            </button>
         </div>
@@ -532,15 +516,15 @@ export default function App() {
   };
 
   return (
-    <div className={`h-screen w-full flex flex-col md:flex-row overflow-hidden font-sans transition-colors duration-500 ${isLight ? 'text-black selection:bg-neon-green' : 'text-white selection:bg-neon-green selection:text-black'}`} style={bgStyle}>
+    <div className={`app-container ${themeClass}`} style={bgStyle}>
       
       {/* SIDEBAR */}
-      <aside className={`hidden md:flex flex-col w-64 border-r p-6 z-20 backdrop-blur-md ${isLight ? 'bg-white/70 border-gray-200' : 'bg-[#0a0a0a]/80 border-gray-800'}`}>
-         <div className="flex items-center gap-3 mb-10 text-neon-green">
+      <aside className="sidebar">
+         <div className="flex items-center gap-3 text-primary" style={{ marginBottom: '2.5rem' }}>
             <Music2 size={32} />
-            <span className="text-2xl font-mono font-black tracking-tighter">616</span>
+            <span className="font-mono" style={{ fontSize: '1.5rem', fontWeight: 900 }}>616</span>
          </div>
-         <nav className="space-y-2 flex-1">
+         <nav style={{ flex: 1 }}>
             {[
               { id: 'home', icon: Home, label: t.nav.home },
               { id: 'search', icon: Search, label: t.nav.search },
@@ -551,48 +535,45 @@ export default function App() {
               <button
                 key={item.id}
                 onClick={() => setView(item.id as ViewState)}
-                className={`w-full flex items-center px-4 py-3 rounded-xl transition-all font-medium 
-                ${view === item.id || (item.id === 'playlists' && view === 'playlist-details')
-                  ? 'bg-neon-green text-black shadow-[0_0_15px_rgba(57,255,20,0.3)]' 
-                  : (isLight ? 'text-gray-600 hover:bg-black/5' : 'text-gray-400 hover:bg-white/5 hover:text-white')}`}
+                className={`nav-btn ${view === item.id || (item.id === 'playlists' && view === 'playlist-details') ? 'active' : ''}`}
               >
-                <item.icon size={20} className="mr-3" />
+                <item.icon size={20} style={{ marginRight: '0.75rem' }} />
                 {item.label}
               </button>
             ))}
          </nav>
-         <div className={`flex items-center gap-3 p-3 rounded-xl border mt-auto ${isLight ? 'bg-black/5 border-black/10' : 'bg-white/5 border-white/10'}`}>
-            <img src={user.avatarUrl} alt="User" className="w-10 h-10 rounded-full border border-neon-green" />
-            <div className="overflow-hidden">
-               <p className="font-bold text-sm truncate">{user.username}</p>
-               <p className="text-xs text-neon-green">{user.id === 'guest' ? 'Guest Account' : 'Premium'}</p>
+         <div className="user-badge">
+            <img src={user.avatarUrl} alt="User" style={{ width: '40px', height: '40px', borderRadius: '50%', border: '1px solid var(--primary)' }} />
+            <div style={{ overflow: 'hidden' }}>
+               <p className="font-bold truncate" style={{ fontSize: '0.875rem' }}>{user.username}</p>
+               <p className="text-primary truncate" style={{ fontSize: '0.75rem' }}>{user.id === 'guest' ? 'Guest' : 'Premium'}</p>
             </div>
          </div>
       </aside>
 
       {/* MAIN CONTENT */}
-      <main className="flex-1 flex flex-col relative overflow-hidden backdrop-blur-sm">
+      <main className="main-content">
         
         {/* Mobile Header */}
-        <div className={`md:hidden flex items-center justify-between p-4 border-b z-20 ${isLight ? 'bg-white/80 border-gray-200' : 'bg-black/80 border-gray-800'}`}>
-           <span className="text-2xl font-mono font-black text-neon-green">616</span>
-           <button onClick={() => setView('settings')}><Settings className={isLight ? "text-gray-600" : "text-gray-400"} /></button>
+        <div className="mobile-header">
+           <span className="font-mono text-primary" style={{ fontSize: '1.5rem', fontWeight: 900 }}>616</span>
+           <button onClick={() => setView('settings')} style={{ background: 'none', border: 'none', color: 'var(--text-muted)' }}><Settings /></button>
         </div>
 
-        <div className="flex-1 overflow-y-auto pb-40 scrollbar-thin scrollbar-thumb-gray-700">
+        <div className="view-scroll-area">
            
            {/* VIEW: HOME */}
            {view === 'home' && (
-             <div className="p-6 md:p-8 max-w-7xl mx-auto">
-                <header className="mb-8">
-                   <h1 className="text-3xl font-bold mb-2">{t.auth.welcome}, {user.username}</h1>
-                   <p className={isLight ? "text-gray-600" : "text-gray-400"}>{t.home.top_hits}</p>
+             <div className="view-container">
+                <header style={{ marginBottom: '2rem' }}>
+                   <h1 style={{ fontSize: '2rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>{t.auth.welcome}, {user.username}</h1>
+                   <p className="text-muted">{t.home.top_hits}</p>
                 </header>
                 
                 {isLoading ? (
-                  <div className="flex justify-center py-20"><Loader2 className="animate-spin text-neon-green" size={40}/></div>
+                  <div className="flex justify-center" style={{ padding: '5rem 0' }}><Loader2 className="animate-spin text-primary" size={40}/></div>
                 ) : (
-                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+                  <div className="song-grid">
                     {homeSongs.map(song => (
                       <SongItem key={song.id} song={song} />
                     ))}
@@ -603,29 +584,29 @@ export default function App() {
 
            {/* VIEW: SEARCH */}
            {view === 'search' && (
-             <div className="p-6 md:p-8 max-w-5xl mx-auto">
-                <div className={`sticky top-0 z-10 py-4 -mt-4 mb-6 backdrop-blur-xl ${isLight ? 'bg-white/60' : 'bg-[#050505]/60'}`}>
-                   <div className="relative">
-                      <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+             <div className="view-container">
+                <div className="search-header">
+                   <div className="search-input-wrapper">
+                      <Search className="absolute" style={{ left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
                       <input 
                         autoFocus
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         onKeyDown={(e) => e.key === 'Enter' && performSearch(searchQuery)}
                         placeholder={t.search.placeholder}
-                        className={`w-full border rounded-full py-3.5 pl-12 pr-12 focus:border-neon-green focus:outline-none transition-colors ${isLight ? 'bg-white border-gray-300 text-black' : 'bg-[#121212] border-gray-700 text-white'}`}
+                        className="search-input"
                       />
-                      {isLoading && <Loader2 className="absolute right-4 top-1/2 -translate-y-1/2 text-neon-green animate-spin" />}
+                      {isLoading && <Loader2 className="absolute animate-spin text-primary" style={{ right: '1rem', top: '50%', transform: 'translateY(-50%)' }} />}
                    </div>
                 </div>
 
-                <div className="space-y-1">
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
                    {searchResults.length > 0 ? (
                      searchResults.map(song => (
                        <SongItem key={song.id} song={song} displayMode="row" />
                      ))
                    ) : (
-                     <div className={`text-center py-20 ${isLight ? 'text-gray-500' : 'text-gray-500'}`}>
+                     <div className="text-center text-muted" style={{ padding: '5rem 0' }}>
                         <p>{searchQuery ? t.search.no_results : 'Type to search Apple Music...'}</p>
                      </div>
                    )}
@@ -635,12 +616,12 @@ export default function App() {
 
            {/* VIEW: LIBRARY */}
            {view === 'library' && (
-             <div className="p-6 md:p-8 max-w-5xl mx-auto">
-                <h2 className="text-2xl font-bold mb-6 flex items-center gap-2"><Heart className="text-neon-green" fill="currentColor"/> {t.library.favorites}</h2>
+             <div className="view-container">
+                <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}><Heart className="text-primary" fill="currentColor"/> {t.library.favorites}</h2>
                 {library.length === 0 ? (
-                  <div className="text-center py-20 text-gray-500">{t.library.empty}</div>
+                  <div className="text-center text-muted" style={{ padding: '5rem 0' }}>{t.library.empty}</div>
                 ) : (
-                  <div className="space-y-1">
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
                     {library.map(song => (
                       <SongItem key={song.id} song={song} displayMode="row" />
                     ))}
@@ -651,41 +632,42 @@ export default function App() {
 
            {/* VIEW: PLAYLISTS */}
            {view === 'playlists' && (
-             <div className="p-6 md:p-8 max-w-5xl mx-auto">
-                <div className="flex justify-between items-center mb-6">
-                   <h2 className="text-2xl font-bold">{t.playlists.title}</h2>
+             <div className="view-container">
+                <div className="flex justify-between items-center" style={{ marginBottom: '1.5rem' }}>
+                   <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>{t.playlists.title}</h2>
                    <button 
                      onClick={() => setShowPlaylistModal(true)}
-                     className="bg-neon-green text-black font-bold px-4 py-2 rounded-full hover:brightness-110 transition-all flex items-center gap-2"
+                     className="bg-primary"
+                     style={{ color: '#000', fontWeight: 'bold', padding: '0.5rem 1rem', borderRadius: '999px', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
                    >
                      <Plus size={18} /> {t.playlists.create}
                    </button>
                 </div>
 
                 {playlists.length === 0 ? (
-                  <div className="text-center py-20 text-gray-500">{t.playlists.empty}</div>
+                  <div className="text-center text-muted" style={{ padding: '5rem 0' }}>{t.playlists.empty}</div>
                 ) : (
-                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                  <div className="playlist-grid">
                     {playlists.map(pl => (
                       <div 
                         key={pl.id} 
                         onClick={() => { setActivePlaylist(pl); setView('playlist-details'); }}
-                        className={`p-4 rounded-xl cursor-pointer group transition-colors ${isLight ? 'bg-white/80 hover:bg-white shadow-lg' : 'bg-[#121212] hover:bg-[#1a1a1a]'}`}
+                        className="card group cursor-pointer"
                       >
-                        <div className="w-full aspect-square bg-gray-800 rounded-lg mb-3 flex items-center justify-center overflow-hidden relative">
+                        <div style={{ width: '100%', aspectRatio: '1/1', backgroundColor: '#1f2937', borderRadius: '0.5rem', marginBottom: '0.75rem', position: 'relative', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                            {pl.songs.length > 0 ? (
-                             <div className="grid grid-cols-2 w-full h-full">
-                               {pl.songs.slice(0,4).map(s => <img key={s.id} src={s.coverUrl} className="w-full h-full object-cover"/>)}
+                             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', width: '100%', height: '100%' }}>
+                               {pl.songs.slice(0,4).map(s => <img key={s.id} src={s.coverUrl} style={{ width: '100%', height: '100%', objectFit: 'cover' }}/>)}
                              </div>
                            ) : (
-                             <ListMusic size={40} className="text-gray-600" />
+                             <ListMusic size={40} className="text-muted" />
                            )}
-                           <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
-                             <Play size={30} className="text-white" fill="white" />
+                           <div className="absolute group-hover:opacity-100" style={{ inset: 0, backgroundColor: 'rgba(0,0,0,0.5)', opacity: 0, transition: 'opacity 0.2s', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                             <Play size={30} style={{ color: 'white', fill: 'white' }} />
                            </div>
                         </div>
                         <h3 className="font-bold truncate">{pl.name}</h3>
-                        <p className="text-xs text-gray-500">{pl.songs.length} songs</p>
+                        <p className="text-muted" style={{ fontSize: '0.75rem' }}>{pl.songs.length} songs</p>
                       </div>
                     ))}
                   </div>
@@ -695,33 +677,33 @@ export default function App() {
 
            {/* VIEW: PLAYLIST DETAILS */}
            {view === 'playlist-details' && activePlaylist && (
-             <div className="p-6 md:p-8 max-w-5xl mx-auto">
-                <div className="flex flex-col md:flex-row gap-6 mb-8">
-                   <div className="w-40 h-40 md:w-56 md:h-56 bg-gray-800 rounded-xl shadow-2xl overflow-hidden flex-shrink-0 grid grid-cols-2">
-                      {activePlaylist.songs.slice(0,4).map(s => <img key={s.id} src={s.coverUrl} className="w-full h-full object-cover"/>)}
+             <div className="view-container">
+                <div className="flex flex-col md:flex-row gap-6" style={{ marginBottom: '2rem', alignItems: 'flex-end' }}>
+                   <div style={{ width: '200px', height: '200px', backgroundColor: '#1f2937', borderRadius: '0.75rem', overflow: 'hidden', display: 'grid', gridTemplateColumns: '1fr 1fr', flexShrink: 0, boxShadow: '0 10px 25px rgba(0,0,0,0.5)' }}>
+                      {activePlaylist.songs.slice(0,4).map(s => <img key={s.id} src={s.coverUrl} style={{ width: '100%', height: '100%', objectFit: 'cover' }}/>)}
                    </div>
-                   <div className="flex flex-col justify-end">
-                      <p className="text-xs text-neon-green font-bold uppercase tracking-widest mb-2">Playlist</p>
-                      <h1 className="text-4xl md:text-6xl font-black mb-4">{activePlaylist.name}</h1>
+                   <div style={{ flex: 1 }}>
+                      <p className="text-primary" style={{ fontSize: '0.75rem', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '0.5rem' }}>Playlist</p>
+                      <h1 style={{ fontSize: '3rem', fontWeight: 900, lineHeight: 1, marginBottom: '1rem' }}>{activePlaylist.name}</h1>
                       <div className="flex items-center gap-4">
-                         <button onClick={() => { if(activePlaylist.songs.length) playSong(activePlaylist.songs[0]); }} className="w-12 h-12 rounded-full bg-neon-green flex items-center justify-center hover:scale-105 transition-transform">
-                           <Play fill="black" className="ml-1" />
+                         <button onClick={() => { if(activePlaylist.songs.length) playSong(activePlaylist.songs[0]); }} className="play-fab">
+                           <Play fill="black" style={{ marginLeft: '2px' }} />
                          </button>
-                         <button onClick={() => deletePlaylist(activePlaylist.id)} className="text-gray-400 hover:text-red-500">
+                         <button onClick={() => deletePlaylist(activePlaylist.id)} className="icon-btn" style={{ color: '#ef4444' }}>
                            <Trash2 />
                          </button>
                       </div>
                    </div>
                 </div>
 
-                <div className="space-y-1">
+                <div style={{ display: 'flex', flexDirection: 'column' }}>
                    {activePlaylist.songs.length === 0 ? (
-                     <div className="text-gray-500 py-10">This playlist is empty. Search for songs to add them!</div>
+                     <div className="text-muted" style={{ padding: '2.5rem 0' }}>This playlist is empty. Search for songs to add them!</div>
                    ) : (
                      activePlaylist.songs.map((song, idx) => (
-                       <div key={idx + song.id} className="flex items-center group">
-                          <span className="w-8 text-center text-gray-500 text-sm font-mono group-hover:text-neon-green">{idx + 1}</span>
-                          <div className="flex-1">
+                       <div key={idx + song.id} className="list-row">
+                          <span className="text-muted" style={{ width: '2rem', textAlign: 'center', fontFamily: 'monospace', fontSize: '0.875rem' }}>{idx + 1}</span>
+                          <div style={{ flex: 1 }}>
                             <SongItem song={song} displayMode="row" />
                           </div>
                        </div>
@@ -729,24 +711,28 @@ export default function App() {
                    )}
                 </div>
                 
-                <button onClick={() => setView('playlists')} className="mt-8 text-sm text-gray-500 hover:text-neon-green">← Back to Playlists</button>
+                <button onClick={() => setView('playlists')} className="text-muted" style={{ marginTop: '2rem', fontSize: '0.875rem', cursor: 'pointer', background: 'none', border: 'none' }}>&larr; Back to Playlists</button>
              </div>
            )}
 
            {/* VIEW: SETTINGS */}
            {view === 'settings' && (
-             <div className="p-6 md:p-8 max-w-3xl mx-auto">
-                <h2 className="text-3xl font-bold mb-8">{t.settings.title}</h2>
+             <div className="view-container" style={{ maxWidth: '800px' }}>
+                <h2 style={{ fontSize: '2rem', fontWeight: 'bold', marginBottom: '2rem' }}>{t.settings.title}</h2>
                 
-                <div className="space-y-6">
-                   <section className={`rounded-2xl p-6 border ${isLight ? 'bg-white/80 border-gray-200' : 'bg-[#121212] border-gray-800'}`}>
-                      <h3 className="text-lg font-bold mb-4 flex items-center gap-2"><Globe size={18} className="text-neon-green"/> {t.settings.language}</h3>
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                   <section className="card">
+                      <h3 style={{ fontSize: '1.1rem', fontWeight: 'bold', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}><Globe size={18} className="text-primary"/> {t.settings.language}</h3>
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.75rem' }}>
                          {['az', 'en', 'tr', 'ru'].map(lang => (
                            <button 
                              key={lang} 
                              onClick={() => setSettings({...settings, language: lang as Language})}
-                             className={`py-2 px-4 rounded-lg font-bold uppercase text-sm transition-all ${settings.language === lang ? 'bg-neon-green text-black' : (isLight ? 'bg-gray-200 hover:bg-gray-300' : 'bg-gray-800 hover:bg-gray-700')}`}
+                             style={{ 
+                               padding: '0.5rem 1rem', borderRadius: '0.5rem', border: 'none', fontWeight: 'bold', textTransform: 'uppercase', cursor: 'pointer',
+                               backgroundColor: settings.language === lang ? 'var(--primary)' : 'rgba(128,128,128,0.1)',
+                               color: settings.language === lang ? '#000' : 'inherit'
+                             }}
                            >
                              {lang}
                            </button>
@@ -754,41 +740,52 @@ export default function App() {
                       </div>
                    </section>
 
-                   <section className={`rounded-2xl p-6 border ${isLight ? 'bg-white/80 border-gray-200' : 'bg-[#121212] border-gray-800'}`}>
-                      <h3 className="text-lg font-bold mb-4 flex items-center gap-2"><Loader2 size={18} className="text-neon-green"/> {t.settings.theme}</h3>
-                      <div className="flex gap-4">
+                   <section className="card">
+                      <h3 style={{ fontSize: '1.1rem', fontWeight: 'bold', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}><Loader2 size={18} className="text-primary"/> {t.settings.theme}</h3>
+                      <div style={{ display: 'flex', gap: '1rem' }}>
                           <button 
                              onClick={() => setSettings({...settings, theme: 'deep-neon', background: '#050505'})} 
-                             className={`flex-1 p-4 rounded-xl border-2 ${settings.theme === 'deep-neon' ? 'border-neon-green bg-[#050505]' : 'border-transparent bg-gray-800'} text-white`}
+                             style={{ 
+                               flex: 1, padding: '1rem', borderRadius: '0.75rem', cursor: 'pointer',
+                               border: settings.theme === 'deep-neon' ? '2px solid var(--primary)' : '2px solid transparent',
+                               backgroundColor: '#050505', color: 'white'
+                             }}
                           >
                              Deep Neon
                           </button>
                           <button 
                              onClick={() => setSettings({...settings, theme: 'light-neon', background: '#f3f4f6'})} 
-                             className={`flex-1 p-4 rounded-xl border-2 ${settings.theme === 'light-neon' ? 'border-neon-green bg-white' : 'border-transparent bg-gray-200'} text-black`}
+                             style={{ 
+                               flex: 1, padding: '1rem', borderRadius: '0.75rem', cursor: 'pointer',
+                               border: settings.theme === 'light-neon' ? '2px solid var(--primary)' : '2px solid transparent',
+                               backgroundColor: '#ffffff', color: 'black'
+                             }}
                           >
                              Light Neon
                           </button>
                       </div>
                    </section>
 
-                   <section className={`rounded-2xl p-6 border ${isLight ? 'bg-white/80 border-gray-200' : 'bg-[#121212] border-gray-800'}`}>
-                      <h3 className="text-lg font-bold mb-4 flex items-center gap-2"><UserIcon size={18} className="text-neon-green"/> Account</h3>
-                      <div className="flex items-center justify-between">
+                   <section className="card">
+                      <h3 style={{ fontSize: '1.1rem', fontWeight: 'bold', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}><UserIcon size={18} className="text-primary"/> Account</h3>
+                      <div className="justify-between items-center flex">
                          <div className="flex items-center gap-3">
-                            <img src={user.avatarUrl} className="w-12 h-12 rounded-full" alt="user"/>
+                            <img src={user.avatarUrl} style={{ width: '3rem', height: '3rem', borderRadius: '50%' }} alt="user"/>
                             <div>
                                <p className="font-bold">{user.username}</p>
-                               <p className="text-xs text-gray-500">ID: {user.id}</p>
+                               <p className="text-muted" style={{ fontSize: '0.75rem' }}>ID: {user.id}</p>
                             </div>
                          </div>
-                         <button onClick={handleLogout} className="px-4 py-2 rounded-lg border border-red-500 text-red-500 hover:bg-red-500 hover:text-white transition-colors flex items-center gap-2">
+                         <button 
+                           onClick={handleLogout} 
+                           style={{ padding: '0.5rem 1rem', borderRadius: '0.5rem', border: '1px solid #ef4444', color: '#ef4444', background: 'transparent', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+                         >
                             <LogOut size={16}/> {t.settings.logout}
                          </button>
                       </div>
                    </section>
 
-                   <div className="text-center text-xs text-gray-500 pt-10">
+                   <div className="text-center text-muted" style={{ fontSize: '0.75rem', paddingTop: '2.5rem' }}>
                       Version 6.1.6 • Powered by iTunes API
                    </div>
                 </div>
@@ -801,19 +798,20 @@ export default function App() {
         
         {/* CREATE PLAYLIST MODAL */}
         {showPlaylistModal && (
-          <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-             <div className={`border w-full max-w-md rounded-2xl p-6 shadow-2xl ${isLight ? 'bg-white border-gray-200' : 'bg-[#1a1a1a] border-gray-700'}`}>
-                <h3 className="text-xl font-bold mb-4">{t.playlists.create_title}</h3>
+          <div className="absolute inset-0 flex items-center justify-center" style={{ backgroundColor: 'rgba(0,0,0,0.8)', zIndex: 50, backdropFilter: 'blur(4px)' }}>
+             <div className="card" style={{ width: '100%', maxWidth: '400px', backgroundColor: 'var(--modal-bg)' }}>
+                <h3 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '1rem' }}>{t.playlists.create_title}</h3>
                 <input 
                   autoFocus
                   value={newPlaylistName} 
                   onChange={e => setNewPlaylistName(e.target.value)}
                   placeholder={t.playlists.name_placeholder}
-                  className={`w-full border rounded-lg p-3 mb-6 focus:border-neon-green focus:outline-none ${isLight ? 'bg-gray-100 border-gray-300 text-black' : 'bg-[#121212] border-gray-700 text-white'}`}
+                  className="search-input"
+                  style={{ marginBottom: '1.5rem', borderRadius: '0.5rem' }}
                 />
                 <div className="flex justify-end gap-3">
-                   <button onClick={() => setShowPlaylistModal(false)} className="px-4 py-2 rounded-lg text-gray-500 hover:bg-gray-500/10">Cancel</button>
-                   <button onClick={createPlaylist} className="px-6 py-2 rounded-lg bg-neon-green text-black font-bold hover:brightness-110">{t.playlists.create_btn}</button>
+                   <button onClick={() => setShowPlaylistModal(false)} style={{ padding: '0.5rem 1rem', borderRadius: '0.5rem', border: 'none', background: 'transparent', color: 'var(--text-muted)', cursor: 'pointer' }}>Cancel</button>
+                   <button onClick={createPlaylist} style={{ padding: '0.5rem 1.5rem', borderRadius: '0.5rem', border: 'none', background: 'var(--primary)', color: '#000', fontWeight: 'bold', cursor: 'pointer' }}>{t.playlists.create_btn}</button>
                 </div>
              </div>
           </div>
@@ -821,25 +819,26 @@ export default function App() {
 
         {/* ADD TO PLAYLIST MODAL */}
         {showAddToPlaylistModal && (
-          <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-             <div className={`border w-full max-w-md rounded-2xl p-6 shadow-2xl ${isLight ? 'bg-white border-gray-200' : 'bg-[#1a1a1a] border-gray-700'}`}>
-                <div className="flex justify-between items-center mb-4">
-                   <h3 className="text-xl font-bold">{t.player.add_to_pl}</h3>
-                   <button onClick={() => setShowAddToPlaylistModal(null)}><X size={20} className="text-gray-500"/></button>
+          <div className="absolute inset-0 flex items-center justify-center" style={{ backgroundColor: 'rgba(0,0,0,0.8)', zIndex: 50, backdropFilter: 'blur(4px)' }}>
+             <div className="card" style={{ width: '100%', maxWidth: '400px', backgroundColor: 'var(--modal-bg)' }}>
+                <div className="flex justify-between items-center" style={{ marginBottom: '1rem' }}>
+                   <h3 style={{ fontSize: '1.25rem', fontWeight: 'bold' }}>{t.player.add_to_pl}</h3>
+                   <button onClick={() => setShowAddToPlaylistModal(null)} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}><X size={20} /></button>
                 </div>
                 
-                <div className="max-h-60 overflow-y-auto space-y-2 mb-4">
-                   {playlists.length === 0 && <p className="text-gray-500 text-center py-4">{t.playlists.empty}</p>}
+                <div style={{ maxHeight: '240px', overflowY: 'auto', marginBottom: '1rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                   {playlists.length === 0 && <p className="text-muted text-center" style={{ padding: '1rem' }}>{t.playlists.empty}</p>}
                    {playlists.map(pl => (
                      <button 
                        key={pl.id}
                        onClick={() => addSongToPlaylist(pl.id, showAddToPlaylistModal)}
-                       className={`w-full flex items-center gap-3 p-3 rounded-lg transition-colors text-left ${isLight ? 'hover:bg-gray-100' : 'hover:bg-white/10'}`}
+                       className="list-row"
+                       style={{ width: '100%', border: 'none', cursor: 'pointer', color: 'inherit', textAlign: 'left' }}
                      >
-                        <div className="w-10 h-10 bg-gray-800 rounded flex items-center justify-center"><ListMusic size={20} className="text-gray-500"/></div>
+                        <div style={{ width: '40px', height: '40px', backgroundColor: 'rgba(128,128,128,0.2)', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginRight: '0.75rem' }}><ListMusic size={20} className="text-muted"/></div>
                         <div>
                            <p className="font-bold">{pl.name}</p>
-                           <p className="text-xs text-gray-500">{pl.songs.length} songs</p>
+                           <p className="text-muted" style={{ fontSize: '0.75rem' }}>{pl.songs.length} songs</p>
                         </div>
                      </button>
                    ))}
@@ -847,7 +846,7 @@ export default function App() {
                 
                 <button 
                    onClick={() => { setShowAddToPlaylistModal(null); setShowPlaylistModal(true); }}
-                   className={`w-full py-3 border rounded-lg transition-colors font-bold ${isLight ? 'border-gray-300 text-black hover:bg-gray-50' : 'border-gray-700 text-neon-green hover:bg-neon-green/5'}`}
+                   style={{ width: '100%', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid var(--border-color)', background: 'transparent', color: 'var(--text-main)', fontWeight: 'bold', cursor: 'pointer' }}
                 >
                    + {t.playlists.create}
                 </button>
@@ -856,68 +855,76 @@ export default function App() {
         )}
 
         {/* FIXED PLAYER PANEL */}
-        <div className={`fixed bottom-0 left-0 md:left-64 right-0 h-[110px] backdrop-blur-xl border-t z-50 flex flex-col shadow-2xl ${isLight ? 'bg-white/90 border-gray-200 text-black' : 'bg-[#050505]/95 border-gray-800 text-white'}`}>
+        <div className="player-panel">
            {/* Progress Bar */}
            <div 
-             className="w-full h-1 bg-gray-600/30 cursor-pointer relative group"
+             className="progress-bar-container"
              onClick={(e) => {
                 const rect = e.currentTarget.getBoundingClientRect();
                 const percent = (e.clientX - rect.left) / rect.width;
                 player.seek(percent * player.duration);
              }}
            >
-              <div className="absolute top-0 left-0 h-full bg-neon-green shadow-[0_0_10px_#39ff14]" style={{ width: `${(player.progress / (player.duration || 1)) * 100}%` }} />
-              <div className="absolute top-1/2 -translate-y-1/2 -ml-1.5 w-3 h-3 bg-neon-green rounded-full opacity-0 group-hover:opacity-100 transition-opacity left-[var(--prog)]" style={{ left: `${(player.progress / (player.duration || 1)) * 100}%` } as any} />
+              <div className="progress-fill" style={{ width: `${(player.progress / (player.duration || 1)) * 100}%` }} />
+              <div className="progress-thumb" style={{ left: `${(player.progress / (player.duration || 1)) * 100}%`, opacity: 1 }} />
            </div>
 
-           <div className="flex-1 flex items-center justify-between px-4 md:px-8">
+           <div className="player-controls-row">
               {/* Song Info */}
-              <div className="flex items-center w-1/3 gap-3 overflow-hidden">
+              <div className="flex items-center gap-3" style={{ width: '30%', overflow: 'hidden' }}>
                  {currentSong ? (
                    <>
-                     <img src={currentSong.coverUrl} className={`w-12 h-12 rounded-md border border-gray-800 ${player.isPlaying ? 'animate-[spin_8s_linear_infinite]' : ''}`} alt="Art" />
-                     <div className="min-w-0">
-                        <h4 className="font-bold truncate text-sm">{currentSong.title}</h4>
-                        <p className="text-xs text-gray-500 truncate">{currentSong.artist}</p>
+                     <img src={currentSong.coverUrl} style={{ width: '48px', height: '48px', borderRadius: '4px', border: '1px solid #333' }} className={player.isPlaying ? 'animate-spin-slow' : ''} alt="Art" />
+                     <div style={{ minWidth: 0 }}>
+                        <h4 className="truncate font-bold" style={{ fontSize: '0.875rem' }}>{currentSong.title}</h4>
+                        <p className="text-muted truncate" style={{ fontSize: '0.75rem' }}>{currentSong.artist}</p>
                      </div>
                    </>
                  ) : (
                    <div className="flex items-center gap-3 opacity-50">
-                       <div className="w-12 h-12 bg-gray-700 rounded-md animate-pulse" />
-                       <div className="hidden sm:block space-y-2">
-                          <div className="w-20 h-3 bg-gray-700 rounded animate-pulse"/>
-                          <div className="w-12 h-2 bg-gray-700 rounded animate-pulse"/>
+                       <div style={{ width: '48px', height: '48px', backgroundColor: '#333', borderRadius: '4px' }} className="animate-pulse" />
+                       <div className="flex-col gap-2">
+                          <div style={{ width: '80px', height: '12px', backgroundColor: '#333', marginBottom: '4px', borderRadius: '2px' }} className="animate-pulse"/>
+                          <div style={{ width: '48px', height: '8px', backgroundColor: '#333', borderRadius: '2px' }} className="animate-pulse"/>
                        </div>
                    </div>
                  )}
               </div>
 
               {/* Controls */}
-              <div className="flex items-center justify-center gap-4 md:gap-6 flex-1">
-                 <button onClick={() => player.skip(-10)} className="text-gray-500 hover:text-neon-green transition-colors"><RotateCcw size={20} /></button>
-                 <button onClick={player.togglePlay} className="w-12 h-12 rounded-full bg-neon-green text-black flex items-center justify-center hover:scale-105 hover:shadow-[0_0_15px_rgba(57,255,20,0.5)] transition-all shadow-lg">
-                   {player.isPlaying ? <Pause size={24} fill="black" /> : <Play size={24} fill="black" className="ml-1" />}
+              <div className="flex items-center justify-center gap-6" style={{ flex: 1 }}>
+                 <button onClick={() => player.skip(-10)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }} className="hover:text-primary"><RotateCcw size={20} /></button>
+                 <button onClick={player.togglePlay} className="play-fab">
+                   {player.isPlaying ? <Pause size={24} fill="black" /> : <Play size={24} fill="black" style={{ marginLeft: '2px' }} />}
                  </button>
-                 <button onClick={() => player.skip(10)} className="text-gray-500 hover:text-neon-green transition-colors"><RotateCw size={20} /></button>
+                 <button onClick={() => player.skip(10)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }} className="hover:text-primary"><RotateCw size={20} /></button>
               </div>
 
               {/* Volume */}
-              <div className="w-1/3 flex justify-end items-center gap-3">
-                 <Volume2 size={18} className="text-gray-500 hidden sm:block" />
+              <div className="vol-control flex justify-end items-center gap-3" style={{ width: '30%' }}>
+                 <Volume2 size={18} className="text-muted" />
                  <input 
                    type="range" min="0" max="1" step="0.01" 
                    value={settings.volume} 
                    onChange={(e) => setSettings({...settings, volume: parseFloat(e.target.value)})} 
-                   className="w-20 h-1 bg-gray-500 rounded-full appearance-none cursor-pointer accent-neon-green"
+                   style={{ width: '80px' }}
                  />
               </div>
            </div>
         </div>
 
         {/* MOBILE NAV */}
-        <div className={`md:hidden fixed bottom-[110px] left-0 right-0 backdrop-blur-md flex justify-around p-3 border-t z-40 ${isLight ? 'bg-white/90 border-gray-200' : 'bg-black/90 border-gray-800'}`}>
+        <div className="mobile-nav">
            {[ { id: 'home', icon: Home }, { id: 'search', icon: Search }, { id: 'library', icon: Library }, { id: 'playlists', icon: ListMusic } ].map(item => (
-             <button key={item.id} onClick={() => setView(item.id as ViewState)} className={`p-2 rounded-full ${view === item.id ? 'text-neon-green bg-neon-green/10' : 'text-gray-400'}`}>
+             <button 
+                key={item.id} 
+                onClick={() => setView(item.id as ViewState)} 
+                style={{ 
+                   padding: '0.5rem', borderRadius: '50%', border: 'none', background: 'transparent', cursor: 'pointer',
+                   color: view === item.id ? 'var(--primary)' : 'var(--text-muted)',
+                   backgroundColor: view === item.id ? 'var(--primary-dim)' : 'transparent'
+                }}
+             >
                 <item.icon size={24} />
              </button>
            ))}
