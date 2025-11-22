@@ -367,15 +367,16 @@ export default function App() {
     if (!isHomeUpdate) setIsLoading(true);
     
     try {
-      // 1. Build the API URL
-      const api = `https://itunes.apple.com/search?term=${encodeURIComponent(query)}&media=music&entity=song&limit=40`;
+      // iOS Safari/Chrome Mobile Fix:
+      // We switch to DIRECT iTunes API access instead of corsproxy.io.
+      // corsproxy.io and other public proxies are frequently blocked by iOS content filters and security settings.
+      // iTunes API (itunes.apple.com) natively supports CORS (Access-Control-Allow-Origin: *).
+      // We also add a timestamp to the URL to prevent iOS Safari from caching search results aggressively.
+      const timestamp = Date.now();
+      const api = `https://itunes.apple.com/search?term=${encodeURIComponent(query)}&media=music&entity=song&limit=40&country=US&v=${timestamp}`;
       
-      // 2. Wrap the API URL with a CORS proxy to support mobile/web browsers
-      // Encoding the target API URL ensures query parameters are passed correctly to the proxy
-      const proxy = `https://corsproxy.io/?${encodeURIComponent(api)}`;
-
-      // 3. Fetch the data
-      const res = await fetch(proxy, { mode: "cors" });
+      // Direct fetch - robust on all platforms including iOS
+      const res = await fetch(api);
       
       if (!res.ok) {
         throw new Error(`Search failed with status ${res.status}`);
@@ -399,10 +400,9 @@ export default function App() {
         setSearchResults(songs);
       }
     } catch (e) {
-      console.error("Mobile CORS error:", e);
-      // Fallback to direct call if proxy fails (though unlikely)
-      if (e instanceof Error && !isHomeUpdate) {
-         // Optional: Provide user feedback here
+      console.error("API Error:", e);
+      if (!isHomeUpdate) {
+        // Handle error UI if needed
       }
     } finally {
       setIsLoading(false);
