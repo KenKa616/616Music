@@ -20,16 +20,23 @@ const useAudioPlayer = (volume: number) => {
 
   useEffect(() => {
     const audio = new Audio();
+    // iOS Safari Compatibility Fixes:
+    // 1. crossOrigin anonymous is required for some CDNs/proxies
     audio.crossOrigin = "anonymous";
+    // 2. preload 'none' prevents iOS from blocking the object before interaction
+    audio.preload = "none"; 
+    
     audioRef.current = audio;
 
     const handleTimeUpdate = () => setProgress(audio.currentTime);
     const handleLoadedMetadata = () => setDuration(audio.duration || 30);
     const handleEnded = () => setIsPlaying(false);
+    const handleError = (e: Event) => console.error("Audio Playback Error:", e);
 
     audio.addEventListener('timeupdate', handleTimeUpdate);
     audio.addEventListener('loadedmetadata', handleLoadedMetadata);
     audio.addEventListener('ended', handleEnded);
+    audio.addEventListener('error', handleError);
 
     return () => {
       audio.pause();
@@ -37,35 +44,54 @@ const useAudioPlayer = (volume: number) => {
       audio.removeEventListener('timeupdate', handleTimeUpdate);
       audio.removeEventListener('loadedmetadata', handleLoadedMetadata);
       audio.removeEventListener('ended', handleEnded);
+      audio.removeEventListener('error', handleError);
     };
   }, []);
 
   useEffect(() => {
     if (audioRef.current) {
+      // Note: iOS ignores programmatic volume changes, but this works for other devices
       audioRef.current.volume = volume;
     }
   }, [volume]);
 
-  const playTrack = (src: string) => {
-    if (!audioRef.current) return;
-    if (currentSrc !== src) {
-      audioRef.current.src = src;
-      setCurrentSrc(src);
-      audioRef.current.load();
+  const playTrack = async (src: string) => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    try {
+      // iOS Requirement: Explicitly call load() when changing source
+      // This signals to the OS that the user interaction (click) intends to load this specific stream
+      if (currentSrc !== src) {
+        audio.src = src;
+        setCurrentSrc(src);
+        audio.load(); 
+      }
+
+      // iOS requires play() to be triggered directly by user interaction chain.
+      // Since this function is called from an onClick handler, the Promise should resolve.
+      await audio.play();
+      setIsPlaying(true);
+    } catch (error) {
+      console.error("Playback failed (iOS restriction?):", error);
+      setIsPlaying(false);
     }
-    audioRef.current.play()
-      .then(() => setIsPlaying(true))
-      .catch(e => console.error("Playback error", e));
   };
 
-  const togglePlay = () => {
-    if (!audioRef.current) return;
+  const togglePlay = async () => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    
     if (isPlaying) {
-      audioRef.current.pause();
+      audio.pause();
       setIsPlaying(false);
     } else {
-      audioRef.current.play();
-      setIsPlaying(true);
+      try {
+        await audio.play();
+        setIsPlaying(true);
+      } catch (error) {
+        console.error("Resume failed:", error);
+      }
     }
   };
 
